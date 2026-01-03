@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Resume Analyzer | Smart Career Advisor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #6e8efb 0%, #4a6cf7 100%);
+        }
+
+        .file-upload {
+            border: 2px dashed #cbd5e0;
+            transition: all 0.3s ease;
+        }
+
+        .file-upload:hover {
+            border-color: #4a6cf7;
+            background-color: #f8fafc;
+        }
+
+        .analyze-btn {
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(74, 108, 247, 0.3);
+        }
+
+        .analyze-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(74, 108, 247, 0.4);
+        }
+
+        .result-card {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .result-card:hover {
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .typing-animation {
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 3px solid #4a6cf7;
+            width: 0;
+            animation: typing 2s steps(40, end) forwards;
+        }
+
+        @keyframes typing {
+            from {
+                width: 0
+            }
+
+            to {
+                width: 100%
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="gradient-bg text-white py-8 px-4">
+        <div class="container mx-auto max-w-6xl">
+            <div class="flex flex-col md:flex-row items-center justify-between">
+                <div class="mb-6 md:mb-0">
+                    <h1 class="text-3xl md:text-4xl font-bold mb-2">
+                        <i class="fas fa-robot mr-2"></i> AI Resume Analyzer
+                    </h1>
+                    <p class="text-lg opacity-90">Get expert feedback on your resume instantly</p>
+                </div>
+                <div class="bg-white/20 backdrop-blur-sm rounded-lg p-4">
+                    <p class="text-sm md:text-base">
+                        <i class="fas fa-lightbulb mr-2"></i> Upload your resume and discover how to make it stand out!
+                    </p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto max-w-6xl py-8 px-4">
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-8">
+            <div class="p-6 md:p-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">
+                    <i class="fas fa-magic mr-2 text-blue-500"></i> Smart Resume Analysis
+                </h2>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Upload Section -->
+                    <div>
+                        <form id="resumeForm" enctype="multipart/form-data">
+                            <div class="file-upload bg-gray-50 rounded-lg p-6 mb-6">
+                                <div class="text-center">
+                                    <i class="fas fa-file-upload text-4xl text-blue-500 mb-4"></i>
+                                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Upload Your Resume</h3>
+                                    <p class="text-gray-500 mb-4">Supported formats: PDF or DOCX</p>
+                                    <input type="file" id="resumeFile" name="file" class="hidden" accept=".pdf,.docx">
+                                    <label for="resumeFile"
+                                        class="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-6 rounded-lg inline-block transition">
+                                        <i class="fas fa-cloud-upload-alt mr-2"></i> Choose File
+                                    </label>
+                                    <p id="fileName" class="text-sm text-gray-500 mt-3"></p>
+                                </div>
+                            </div>
+                            <div class="mb-6">
+                                <label for="preferredRole" class="block text-gray-700 font-medium mb-2">
+                                    <i class="fas fa-briefcase mr-2 text-blue-500"></i> Preferred Job Role
+                                </label>
+                                <input type="text" id="preferredRole" name="preferredRole"
+                                    placeholder="e.g., Data Analyst, Full Stack Developer"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+                            </div>
+                            <button type="submit" id="analyzeBtn"
+                                class="analyze-btn w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg pulse">
+                                <i class="fas fa-search mr-2"></i> Analyze Resume
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- How It Works -->
+                    <div class="bg-blue-50 rounded-lg p-6">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">
+                            <i class="fas fa-question-circle mr-2 text-blue-500"></i> How It Works
+                        </h3>
+                        <div class="space-y-4">
+                            <div class="flex items-start">
+                                <div
+                                    class="bg-blue-100 text-blue-600 rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0 mr-3 mt-1">
+                                    <span class="font-bold">1</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium text-gray-800">Upload Your Resume</h4>
+                                    <p class="text-gray-600 text-sm">We support PDF and Word documents. Even scanned
+                                        PDFs will be processed.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div
+                                    class="bg-blue-100 text-blue-600 rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0 mr-3 mt-1">
+                                    <span class="font-bold">2</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium text-gray-800">Enter Target Job</h4>
+                                    <p class="text-gray-600 text-sm">Tell us the role you're applying for so we can give
+                                        tailored advice.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div
+                                    class="bg-blue-100 text-blue-600 rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0 mr-3 mt-1">
+                                    <span class="font-bold">3</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium text-gray-800">Get AI Analysis</h4>
+                                    <p class="text-gray-600 text-sm">Our AI will review your resume and provide
+                                        actionable feedback.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-6 bg-white p-4 rounded-lg border border-blue-100">
+                            <h4 class="font-semibold text-gray-800 mb-2">
+                                <i class="fas fa-lightbulb mr-2 text-yellow-500"></i> Pro Tip
+                            </h4>
+                            <p class="text-gray-600 text-sm">
+                                For best results, upload a resume with clear section headings (Experience, Education,
+                                Skills). The AI can provide more specific feedback when your document is
+                                well-structured.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section (Initially Hidden) -->
+        <div id="resultsSection" class="hidden">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-chart-line mr-2 text-blue-500"></i> Analysis Results
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <!-- Summary Card -->
+                <div class="result-card bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100">
+                    <div class="bg-blue-500 text-white px-4 py-3">
+                        <h3 class="font-semibold flex items-center">
+                            <i class="fas fa-file-alt mr-2"></i> Resume Summary
+                        </h3>
+                    </div>
+                    <div class="p-4">
+                        <div id="summaryContent" class="text-gray-700 min-h-32">
+                            <p class="text-gray-400 italic">Your resume summary will appear here...</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Improvements Card -->
+                <div class="result-card bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100">
+                    <div class="bg-yellow-500 text-white px-4 py-3">
+                        <h3 class="font-semibold flex items-center">
+                            <i class="fas fa-tools mr-2"></i> Suggestions for Improvement
+                        </h3>
+                    </div>
+                    <div class="p-4">
+                        <div id="improvementContent" class="text-gray-700 min-h-32">
+                            <p class="text-gray-400 italic">Actionable suggestions to improve your resume will appear
+                                here...</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Job Match Card -->
+                <div class="result-card bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100">
+                    <div class="bg-green-500 text-white px-4 py-3">
+                        <h3 class="font-semibold flex items-center">
+                            <i class="fas fa-bullseye mr-2"></i> Role Fit & Recommendations
+                        </h3>
+                    </div>
+                    <div class="p-4">
+                        <div id="jobmatchContent" class="text-gray-700 min-h-32">
+                            <p class="text-gray-400 italic">Analysis of how well your resume matches your target role
+                                will appear here...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-blue-50 rounded-lg p-6 mb-8">
+                <h3 class="text-xl font-semibold text-gray-800 mb-4">
+                    <i class="fas fa-star mr-2 text-blue-500"></i> Next Steps
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-white p-4 rounded-lg shadow-sm">
+                        <h4 class="font-medium text-gray-800 mb-2 flex items-center">
+                            <i class="fas fa-edit text-blue-500 mr-2"></i> Revise Your Resume
+                        </h4>
+                        <p class="text-gray-600 text-sm">Implement the suggested improvements to strengthen your resume.
+                        </p>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow-sm">
+                        <h4 class="font-medium text-gray-800 mb-2 flex items-center">
+                            <i class="fas fa-search-dollar text-blue-500 mr-2"></i> Explore Roles
+                        </h4>
+                        <p class="text-gray-600 text-sm">Consider the alternative roles suggested if they match your
+                            skills better.</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow-sm">
+                        <h4 class="font-medium text-gray-800 mb-2 flex items-center">
+                            <i class="fas fa-redo text-blue-500 mr-2"></i> Reanalyze
+                        </h4>
+                        <p class="text-gray-600 text-sm">Upload your revised resume to check if it's improved.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Spinner (Hidden Initially) -->
+        <div id="loadingSpinner"
+            class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div class="bg-white rounded-lg p-8 max-w-md text-center">
+                <div class="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500 mx-auto mb-4">
+                </div>
+                <h3 class="text-xl font-semibold text-gray-800 mb-2">Analyzing Your Resume</h3>
+                <p class="text-gray-600">Our AI is carefully reviewing your document. This may take a moment...</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-6 px-4">
+        <div class="container mx-auto max-w-6xl">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <h2 class="text-xl font-bold">
+                        <i class="fas fa-robot mr-2"></i> AI Resume Analyzer
+                    </h2>
+                    <p class="text-gray-400 text-sm">Developed by the Team - Fairmind AI</p>
+                </div>
+                <div class="flex space-x-4">
+                    <a href="#" class="text-gray-400 hover:text-white transition">
+                        <i class="fab fa-github text-lg"></i>
+                    </a>
+                    <!-- <a href="#" class="text-gray-400 hover:text-white transition">
+                        <i class="fab fa-twitter text-lg"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition">
+                        <i class="fab fa-linkedin text-lg"></i>
+                    </a> -->
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-6 pt-6 text-center text-gray-400 text-sm">
+                <p>© 2025 AI Resume Analyzer. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Handle file upload display
+        document.getElementById('resumeFile').addEventListener('change', function (e) {
+            const fileName = e.target.files[0]?.name || 'No file chosen';
+            document.getElementById('fileName').textContent = fileName;
+        });
+
+        // API Backend URL (Update with your Flask server URL)
+        const API_URL = 'http://localhost:5000/analyze';
+
+        // Form submission handler
+        document.getElementById('resumeForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const fileInput = document.getElementById('resumeFile');
+            const preferredRole = document.getElementById('preferredRole').value;
+
+            if (!fileInput.files.length) {
+                alert('Please upload a resume file first.');
+                return;
+            }
+
+            if (!preferredRole.trim()) {
+                alert('Please enter your preferred job role.');
+                return;
+            }
+
+            // Create form data for API request
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+            formData.append('preferredRole', preferredRole);
+
+            // Show loading spinner
+            document.getElementById('loadingSpinner').classList.remove('hidden');
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Server error occurred');
+                }
+
+                const data = await response.json();
+
+                // Animate the appearance of results with typing effect
+                const addTypingEffect = (element, text) => {
+                    element.innerHTML = '';
+                    element.classList.add('typing-animation');
+
+                    // Set content
+                    setTimeout(() => {
+                        element.innerHTML = `<p>${text}</p>`;
+                        element.classList.remove('typing-animation');
+                    }, 200);
+                };
+
+                // Display results with slight delay between each for better UX
+                setTimeout(() => {
+                    addTypingEffect(document.getElementById('summaryContent'), data.summary);
+
+                    setTimeout(() => {
+                        addTypingEffect(document.getElementById('improvementContent'), data.improvement);
+
+                        setTimeout(() => {
+                            addTypingEffect(document.getElementById('jobmatchContent'), data.jobmatch);
+                        }, 400);
+                    }, 400);
+                }, 200);
+
+                // Show results section
+                document.getElementById('resultsSection').classList.remove('hidden');
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert(error.message || 'An error occurred while analyzing your resume. Please try again.');
+            } finally {
+                // Hide loading spinner
+                document.getElementById('loadingSpinner').classList.add('hidden');
+            }
+
+            // Scroll to results
+            document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+        });
+    </script>
+</body>
+
+</html>
